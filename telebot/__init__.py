@@ -9,4 +9,5 @@ from telebot.credentials import (
     dify_api_key,
     url,
     webhook_port,
+    base_url,
 )
