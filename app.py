@@ -250,7 +250,7 @@ async def main() -> None:
         config=uvicorn.Config(
             app=starlette_app,
             port=PORT,
-            host="127.0.0.1",  # Listen on all interfaces
+            host="172.17.0.1",  # Listen on all interfaces
             log_level="info",
             # ssl_certfile=r"C:\work\localhost+2.pem",
             # ssl_keyfile=r"C:\work\localhost+2-key.pem",
