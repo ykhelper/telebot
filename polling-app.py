@@ -1,15 +1,9 @@
-import asyncio
 import logging
 import logging.config
 from uuid import uuid4
 
 import httpx
-import uvicorn
 from dify_client import ChatClient
-from starlette.applications import Starlette
-from starlette.requests import Request
-from starlette.responses import PlainTextResponse, Response
-from starlette.routing import Route
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import (
     Application,
@@ -20,7 +14,7 @@ from telegram.ext import (
     filters,
 )
 
-from telebot import base_url, bot_token, dify_api_key, url, webhook_port
+from telebot import bot_token, dify_api_key
 
 # Configure logging
 LOGGING_CONFIG = {
@@ -54,12 +48,7 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 # Initialize Dify Client
-dify_client = ChatClient(dify_api_key, base_url)
-
-# Define configuration constants for the webhook
-PORT = webhook_port
-WEBHOOK_PATH = "/"
-WEBHOOK_URL = f"{url}{WEBHOOK_PATH}"
+dify_client = ChatClient(dify_api_key)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -195,10 +184,10 @@ async def inline_query(
     await update.inline_query.answer(results)
 
 
-async def main() -> None:
-    """Set up the application with webhook and Starlette web server."""
-    # Create the Application with no updater
-    application = Application.builder().token(bot_token).updater(None).build()
+def main() -> None:
+    """Set up the application with polling mechanism."""
+    # Create the Application with default updater (polling)
+    application = Application.builder().token(bot_token).build()
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
@@ -217,56 +206,11 @@ async def main() -> None:
         MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
     )
 
-    # Set webhook for the Telegram bot
-    await application.bot.set_webhook(url=WEBHOOK_URL)
-    logger.info(f"Webhook set up at {WEBHOOK_URL}")
+    logger.info("Starting bot with polling mechanism...")
 
-    # Set up Starlette routes
-    async def telegram_webhook(request: Request) -> Response:
-        """Handle incoming Telegram updates."""
-        try:
-            update_data = await request.json()
-            await application.update_queue.put(
-                Update.de_json(data=update_data, bot=application.bot)
-            )
-        except Exception as e:
-            logger.error(f"Error processing Telegram update: {e}")
-        return Response()
-
-    async def health_check(request: Request) -> PlainTextResponse:
-        """Provide a health check endpoint."""
-        return PlainTextResponse(content="Bot is running")
-
-    # Create Starlette application with routes
-    starlette_app = Starlette(
-        routes=[
-            Route(WEBHOOK_PATH, telegram_webhook, methods=["POST"]),
-            Route("/health", health_check, methods=["GET"]),
-        ]
-    )
-
-    # Configure and run the web server
-    webserver = uvicorn.Server(
-        config=uvicorn.Config(
-            app=starlette_app,
-            port=PORT,
-            host="127.0.0.1",  # Listen on all interfaces
-            log_level="info",
-            ssl_certfile=r"C:\work\localhost+2.pem",
-            ssl_keyfile=r"C:\work\localhost+2-key.pem",
-            forwarded_allow_ips="*",
-            proxy_headers=True,
-        )
-    )
-
-    logger.info(f"Starting webhook server on port {PORT}")
-
-    # Start the application and webserver
-    async with application:
-        await application.start()
-        await webserver.serve()
-        await application.stop()
+    # Start polling for updates
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

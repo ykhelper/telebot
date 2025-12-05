@@ -17,3 +17,5 @@ dify_api_key = os.getenv("DIFY_API_KEY", "your_dify_api_key_here")
 
 # Webhook configuration
 webhook_port = int(os.getenv("PORT", "8000"))
+
+base_url = os.getenv("BASE_URL", "http://contabo.duksosleepy.dev/v1")
