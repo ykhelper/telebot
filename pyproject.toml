@@ -5,8 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "dify-client>=0.1.10",
-    "httpx>=0.28.1",
+    "aiofiles>=25.1.0",
+    "httpx[http2]>=0.28.1",
     "python-dotenv>=1.1.0",
     "python-telegram-bot>=22.0",
     "starlette>=0.46.2",

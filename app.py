@@ -5,7 +5,6 @@ from uuid import uuid4
 
 import httpx
 import uvicorn
-from dify_client import ChatClient
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, Response
@@ -20,7 +19,8 @@ from telegram.ext import (
     filters,
 )
 
-from telebot import base_url, bot_token, dify_api_key, url, webhook_port
+from dify_client import ChatClient
+from telebot import bot_token, dify_api_key, url, webhook_port
 
 # Configure logging
 LOGGING_CONFIG = {
@@ -54,7 +54,7 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 # Initialize Dify Client
-dify_client = ChatClient(api_key=dify_api_key, base_url=base_url)
+dify_client = ChatClient(dify_api_key)
 
 # Define configuration constants for the webhook
 PORT = webhook_port
@@ -252,8 +252,8 @@ async def main() -> None:
             port=PORT,
             host="127.0.0.1",  # Listen on all interfaces
             log_level="info",
-            ssl_certfile=r"C:\work\localhost+2.pem",
-            ssl_keyfile=r"C:\work\localhost+2-key.pem",
+            # ssl_certfile=r"C:\work\localhost+2.pem",
+            # ssl_keyfile=r"C:\work\localhost+2-key.pem",
             forwarded_allow_ips="*",
             proxy_headers=True,
         )
