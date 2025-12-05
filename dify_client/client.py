@@ -29,7 +29,7 @@ class DifyClient(BaseClientMixin):
     def __init__(
         self,
         api_key: str,
-        base_url: str = "https://api.dify.ai/v1",
+        base_url: str = "https://contabo.duksosleepy.dev/v1",
         timeout: float = 60.0,
         max_retries: int = 3,
         retry_delay: float = 1.0,
@@ -790,7 +790,7 @@ class KnowledgeBaseClient(DifyClient):
     def __init__(
         self,
         api_key: str,
-        base_url: str = "https://api.dify.ai/v1",
+        base_url: str = "https://contabo.duksosleepy.dev/v1",
         dataset_id: str | None = None,
     ):
         """

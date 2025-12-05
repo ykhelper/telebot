@@ -41,7 +41,7 @@ class AsyncDifyClient:
     def __init__(
         self,
         api_key: str,
-        base_url: str = "https://api.dify.ai/v1",
+        base_url: str = "https://contabo.duksosleepy.dev/v1",
         timeout: float = 60.0,
     ):
         """Initialize the async Dify client.
@@ -763,7 +763,7 @@ class AsyncKnowledgeBaseClient(AsyncDifyClient):
     def __init__(
         self,
         api_key: str,
-        base_url: str = "https://api.dify.ai/v1",
+        base_url: str = "https://contabo.duksosleepy.dev/v1",
         dataset_id: str | None = None,
         timeout: float = 60.0,
     ):
