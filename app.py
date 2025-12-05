@@ -54,7 +54,7 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 # Initialize Dify Client
-dify_client = ChatClient(dify_api_key, base_url)
+dify_client = ChatClient(api_key=dify_api_key, base_url=base_url)
 
 # Define configuration constants for the webhook
 PORT = webhook_port
